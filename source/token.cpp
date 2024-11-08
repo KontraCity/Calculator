@@ -67,14 +67,14 @@ vector<Token> Tokenize(string input)
 
         if (get<Operation>(token) == ')')
         {
-            while (!operations.empty() && get<char>(operations.back()) != '(')
+            while (!operations.empty() && get<Operation>(operations.back()) != '(')
             {
                 result.push_back(operations.back());
                 operations.pop_back();
             }
             operations.pop_back();
 
-            if (!operations.empty() && operations.back().index() == 2)
+            if (!operations.empty() && operations.back().type() == Token::Function)
             {
                 result.push_back(operations.back());
                 operations.pop_back();
@@ -82,7 +82,7 @@ vector<Token> Tokenize(string input)
             continue;
         }
 
-        while (!operations.empty() && get<char>(operations.back()) != '(' && ToPrecedence(get<Operation>(operations.back())) >= ToPrecedence(get<Operation>(token)))
+        while (!operations.empty() && get<Operation>(operations.back()) != '(' && ToPrecedence(get<Operation>(operations.back())) >= ToPrecedence(get<Operation>(token)))
         {
             result.push_back(operations.back());
             operations.pop_back();
@@ -108,6 +108,9 @@ void Process(vector<Token>& tokens)
 
         double result = 0.0;
         int operands = entry->type() == Token::Operation ? 2 : 1;
+        if (operands + 1 > tokens.size())
+            throw runtime_error("Invalid formula");
+
         if (operands == 2)
         {
             double left = get<double>(*(entry - 2));
@@ -133,10 +136,10 @@ void Print(const std::string& comment, const vector<Token>& tokens)
     cout << comment;
     for (const Token& token : tokens)
     {
-        if (token.index() == 0)
+        if (token.type() == Token::Number)
             cout << get<double>(token) << ' ';
-        else if (token.index() == 1)
-            cout << get<char>(token) << ' ';
+        else if (token.type() == Token::Operation)
+            cout << get<Operation>(token) << ' ';
         else
             cout << ToString(get<Function>(token)) << ' ';
     }

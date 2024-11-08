@@ -5,6 +5,7 @@
 #include <variant>
 #include <string>
 #include <vector>
+#include <stdexcept>
 using namespace std;
 
 // Custom modules
