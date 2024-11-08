@@ -14,3 +14,4 @@ add_executable(Calculator
     "source/operation.cpp"
     "source/token.cpp"
 )
+add_executable(CalculatorSingle "source/single.cpp")
